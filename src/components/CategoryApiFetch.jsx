@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { InputUnit } from './molecules/InputUnit';
 
 export const CategoryApiFetch = () => {
   // const categoryURL = "https://nanahiryu.com/blog_api/category/";　// 本番用
@@ -22,6 +23,17 @@ export const CategoryApiFetch = () => {
     }
   }
 
+  const onClickDelete = (id) => {
+    axios.delete(`${categoryURL}${id}`).then(
+      res => {
+        console.log(res);
+        setCategorys(categorys.filter(category => category.id !== id));
+      }
+    ).catch(
+      error => console.log(error)
+    )
+  }
+
   useEffect(() => {
     axios.get(categoryURL).then(res => {
       setCategorys(res.data);
@@ -30,8 +42,7 @@ export const CategoryApiFetch = () => {
   return (
     <>
       <div>
-        <input value={newCategory} onChange={handleChange} />
-        <button onClick={createNewCategory}>送信</button>
+        <InputUnit newCategory={newCategory} handleChange={handleChange} placeholder="新しいカテゴリー名を入力" createNewCategory={createNewCategory} children="投稿" />
       </div>
       <div>
         <h1>Category List</h1>
@@ -41,6 +52,7 @@ export const CategoryApiFetch = () => {
                 <li key={category.id}>
                   <div>
                     <p>{`id：${category.id}　name：${category.name}`}</p>
+                    <button onClick={() => onClickDelete(category.id)}>delete</button>
                   </div>
                 </li>
               );
